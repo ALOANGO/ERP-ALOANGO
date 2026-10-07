@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kárdex de Movimientos — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link active" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn">☰</button>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="global-search-input" class="global-search-input" placeholder="Buscar productos, clientes, ventas..." />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner">🧪 Tests V0</a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()">🔄 Reiniciar Demo</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Libro Mayor de Kárdex</h1>
+            <p id="kardex-count">Trazabilidad inmutable de entradas, salidas y saldos físicos valorizados.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" onclick="openAdjustmentModal()">
+              ⚙️ Registrar Ajuste Manual
+            </button>
+          </div>
+        </div>
+
+        <div class="alert-banner alert-info" style="margin-bottom: 1.25rem;">
+          <div>
+            <strong>Regla Contable & Trazabilidad:</strong> Los movimientos de Kárdex son estrictamente de solo lectura y append-only. Cualquier rectificación física debe ser realizada generando un movimiento de ajuste o reversión debidamente auditado.
+          </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="toolbar-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="filter-group">
+            <label for="kardex-filter-product">Filtrar por Producto</label>
+            <select id="kardex-filter-product" class="form-select">
+              <option value="">Todos los productos</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="kardex-filter-type">Tipo de Movimiento</label>
+            <select id="kardex-filter-type" class="form-select">
+              <option value="">Todos los tipos</option>
+              <option value="Compra">Compra (Entrada)</option>
+              <option value="Venta">Venta (Salida)</option>
+              <option value="Ajuste entrada">Ajuste entrada</option>
+              <option value="Ajuste salida">Ajuste salida</option>
+              <option value="Devolución venta">Devolución venta</option>
+              <option value="Devolución compra">Devolución compra</option>
+              <option value="Reversión">Reversión</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="kardex-filter-doc">Referencia Documento</label>
+            <input type="text" id="kardex-filter-doc" class="form-control" placeholder="Ej: VEN-00001, COM-00002..." />
+          </div>
+          <div class="filter-group">
+            <label for="kardex-filter-start">Fecha Inicial</label>
+            <input type="date" id="kardex-filter-start" class="form-control" />
+          </div>
+          <div class="filter-group">
+            <label for="kardex-filter-end">Fecha Final</label>
+            <input type="date" id="kardex-filter-end" class="form-control" />
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha & Hora</th>
+                <th>Documento</th>
+                <th>Producto / SKU</th>
+                <th>Tipo Movimiento</th>
+                <th style="color: var(--success);">Entrada (+)</th>
+                <th style="color: var(--danger);">Salida (-)</th>
+                <th>Saldo</th>
+                <th>Costo Unit.</th>
+                <th>Valor Movimiento</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody id="kardex-table-body">
+              <!-- Loaded by kardex.js -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: MANUAL INVENTORY ADJUSTMENT -->
+  <div id="adjustment-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Ajuste de Inventario</h3>
+        <button type="button" class="modal-close-btn" onclick="closeAdjustmentModal()">&times;</button>
+      </div>
+      <form id="adjustment-form">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="adj-product-id">Producto a Ajustar <span class="required">*</span></label>
+            <select id="adj-product-id" class="form-select" required>
+              <!-- Loaded by kardex.js -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="adj-type">Tipo de Ajuste <span class="required">*</span></label>
+              <select id="adj-type" class="form-select" required>
+                <option value="Ajuste entrada">Ajuste de Entrada (+ Existencias)</option>
+                <option value="Ajuste salida">Ajuste de Salida (- Merma/Faltante)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="adj-quantity">Cantidad <span class="required">*</span></label>
+              <input type="number" id="adj-quantity" class="form-control" min="1" step="1" required value="1" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adj-notes">Justificación / Motivo del Ajuste <span class="required">*</span></label>
+            <textarea id="adj-notes" class="form-control" rows="3" placeholder="Indique la causa del ajuste físico (conteo cíclico, merma, rotura...)" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAdjustmentModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Registrar en Kárdex</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/kardex.js"></script>
+</body>
+</html>

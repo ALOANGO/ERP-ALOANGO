@@ -1,0 +1,121 @@
+/* ==========================================================================
+   ERP EMPRESARIAL V0 - RESPONSIVE & MOBILE STYLESHEET
+   Mobile-first adaptations, responsive drawer sidebar & table layouts
+   ========================================================================== */
+
+/* Tablet and below (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  :root {
+    --navbar-height: 58px;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 99;
+  }
+
+  .sidebar-backdrop.active {
+    display: block;
+  }
+
+  .main-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .top-navbar {
+    padding: 0 1rem;
+  }
+
+  .nav-left {
+    max-width: 100%;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem;
+    max-height: 95vh;
+  }
+
+  .totals-card {
+    width: 100%;
+  }
+
+  /* Table styling for small screens */
+  .table th, .table td {
+    padding: 0.6rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .search-container {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    display: none; /* Can be toggled if needed */
+  }
+  
+  .kpi-value {
+    font-size: 1.45rem;
+  }
+}

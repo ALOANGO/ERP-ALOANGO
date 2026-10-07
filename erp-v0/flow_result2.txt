@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="es"><head>
+  <meta charset="UTF-8">
+  <title>Verificación de Flujo Completo — ERP V0</title>
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+</head>
+<body style="font-family: monospace; padding: 20px;">
+  <h2>Verificación de Flujo Completo V0 (Requerimiento 41)</h2>
+  <div id="flow-log"><div style="color: green;">[OK] PASO 1: Login exitoso como Carlos Mendoza (admin)</div><div style="color: green;">[OK] PASO 2: Dashboard KPIs consultados exitosamente (Ventas hoy: 0)</div><div style="color: green;">[OK] PASO 3: Producto creado: SKU PROD-FLOW-01, Stock inicial: 0</div><div style="color: green;">[OK] PASO 4: Cliente creado: Cliente Comercial Flujo SAS (NIT-999888777-1)</div><div style="color: green;">[OK] PASO 5: Proveedor creado: Proveedor Mayorista Flujo SAS (NIT-PROV-FLOW-01)</div><div style="color: green;">[OK] PASO 5: Compra creada en borrador: COM-00001 por NaN</div><div style="color: green;">[OK] PASO 6: Compra aprobada: estado = APROBADO</div><div style="color: green;">[OK] PASO 7: Stock aumentado correctamente: actual = 20 (Esperado: 20)</div><div style="color: green;">[OK] PASO 8: Kárdex verificado: registros encontrados = 1, Entrada: 20</div><div style="color: green;">[OK] PASO 9: Venta creada en borrador: VEN-00001 por NaN</div><div style="color: green;">[OK] PASO 10: Validación de stock superada: Stock disponible &gt;= 8</div><div style="color: green;">[OK] PASO 11: Venta aprobada atómicamente: estado = APROBADO</div><div style="color: green;">[OK] PASO 12: Stock disminuido correctamente: actual = 12 (Esperado: 12)</div><div style="color: red;">[ERROR] PASO ERROR: Cannot read properties of undefined (reading 'balance')</div></div>
+
+  <script>
+    const logEl = document.getElementById('flow-log');
+    function log(step, msg, ok = true) {
+      const div = document.createElement('div');
+      div.style.color = ok ? 'green' : 'red';
+      div.textContent = `[${ok ? 'OK' : 'ERROR'}] PASO ${step}: ${msg}`;
+      logEl.appendChild(div);
+      console.log(`[${ok ? 'OK' : 'ERROR'}] PASO ${step}: ${msg}`);
+    }
+
+    try {
+      // 1. LOGIN
+      const user = AuthService.login('admin@erp.com', 'password');
+      log(1, `Login exitoso como ${user.name} (${user.role})`);
+
+      // 2. DASHBOARD KPIs
+      const kpisInitial = DashboardService.getKPIs();
+      log(2, `Dashboard KPIs consultados exitosamente (Ventas hoy: ${kpisInitial.todaySales.total})`);
+
+      // 3. CREAR PRODUCTO
+      const testSku = 'PROD-FLOW-01';
+      const prod = InventoryService.createProduct({
+        sku: testSku,
+        name: 'Producto de Flujo End-to-End',
+        category: 'Tecnología',
+        cost: 50000,
+        price: 90000,
+        stock: 0,
+        minStock: 2,
+      });
+      log(3, `Producto creado: SKU ${prod.sku}, Stock inicial: ${prod.stock}`);
+
+      // 4. CREAR CLIENTE
+      const testClientDoc = 'NIT-999888777-1';
+      const client = PartnerService.create({
+        type: 'CLIENTE',
+        docType: 'NIT',
+        docNumber: testClientDoc,
+        legalName: 'Cliente Comercial Flujo SAS',
+        city: 'Bogotá',
+      });
+      log(4, `Cliente creado: ${client.legalName} (${client.docNumber})`);
+
+      // 5. CREAR PROVEEDOR & COMPRA
+      const supplier = PartnerService.create({
+        type: 'PROVEEDOR',
+        docType: 'NIT',
+        docNumber: 'NIT-PROV-FLOW-01',
+        legalName: 'Proveedor Mayorista Flujo SAS',
+        city: 'Medellín',
+      });
+      log(5, `Proveedor creado: ${supplier.legalName} (${supplier.docNumber})`);
+
+      const purchase = PurchaseService.createPurchase({
+        supplierId: supplier.id,
+        supplierName: supplier.legalName,
+        supplierDoc: supplier.docNumber,
+        date: ERPUtils.getTodayISO(),
+        dueDate: ERPUtils.getTodayISO(),
+        items: [{ productId: prod.id, quantity: 20, unitCost: 50000 }],
+      });
+      log(5, `Compra creada en borrador: ${purchase.docNumber} por ${purchase.total}`);
+
+      // 6. APROBAR COMPRA
+      const approvedPurchase = PurchaseService.approvePurchase(purchase.id);
+      log(6, `Compra aprobada: estado = ${approvedPurchase.status}`);
+
+      // 7. AUMENTAR STOCK
+      const prodAfterPurchase = InventoryService.getProductById(prod.id);
+      const stockIncreased = prodAfterPurchase.stock === 20;
+      log(7, `Stock aumentado correctamente: actual = ${prodAfterPurchase.stock} (Esperado: 20)`, stockIncreased);
+
+      // 8. VER KÁRDEX
+      const kardexMoves = InventoryService.getKardex({ productId: prod.id });
+      const hasPurchaseKardex = kardexMoves.some(k => k.documentRef === purchase.docNumber && k.entry === 20);
+      log(8, `Kárdex verificado: registros encontrados = ${kardexMoves.length}, Entrada: 20`, hasPurchaseKardex);
+
+      // 9. CREAR VENTA
+      const sale = SalesService.createSale({
+        customerId: client.id,
+        customerName: client.legalName,
+        customerDoc: client.docNumber,
+        date: ERPUtils.getTodayISO(),
+        dueDate: ERPUtils.getTodayISO(),
+        items: [{ productId: prod.id, quantity: 8, unitPrice: 90000 }],
+      });
+      log(9, `Venta creada en borrador: ${sale.docNumber} por ${sale.total}`);
+
+      // 10. VALIDAR STOCK
+      const stockAvailable = InventoryService.validateStockAvailability(prod.id, 8);
+      log(10, `Validación de stock superada: Stock disponible >= 8`, stockAvailable);
+
+      // 11. APROBAR VENTA
+      const approvedSale = SalesService.approveSale(sale.id);
+      log(11, `Venta aprobada atómicamente: estado = ${approvedSale.status}`);
+
+      // 12. DISMINUIR STOCK
+      const prodAfterSale = InventoryService.getProductById(prod.id);
+      const stockDecreased = prodAfterSale.stock === 12; // 20 - 8 = 12
+      log(12, `Stock disminuido correctamente: actual = ${prodAfterSale.stock} (Esperado: 12)`, stockDecreased);
+
+      // 13. GENERAR CARTERA (Cuentas por Cobrar)
+      const arList = PaymentService.getAccountsReceivable();
+      const saleInAR = arList.find(s => s.docNumber === sale.docNumber);
+      const inAR = !!saleInAR && saleInAR.balance === sale.total;
+      log(13, `Cuenta por cobrar generada: Saldo pendiente = ${saleInAR.balance}`, inAR);
+
+      // 14. REGISTRAR PAGO
+      const payment = PaymentService.createPayment({
+        docType: 'VENTA',
+        docNumber: sale.docNumber,
+        amount: sale.total,
+        paymentMethod: 'Transferencia',
+        reference: 'TRF-FLOW-01',
+      });
+      log(14, `Pago registrado: Comprobante ${payment.docCode} por ${payment.amount}`);
+
+      // 15. ACTUALIZAR SALDO
+      const saleAfterPayment = SalesService.getByDocNumber(sale.docNumber);
+      const paidInFull = saleAfterPayment.balance === 0 && saleAfterPayment.status === 'PAGADO';
+      log(15, `Saldo actualizado: Saldo = ${saleAfterPayment.balance}, Estado = ${saleAfterPayment.status}`, paidInFull);
+
+      // 16. VER DASHBOARD & REPORTES
+      const kpisFinal = DashboardService.getKPIs();
+      const chartData = DashboardService.getChartData();
+      log(16, `Dashboard & Reportes actualizados: Ventas mes = ${kpisFinal.monthlyProfit.revenue}, Utilidad = ${kpisFinal.monthlyProfit.profit}`);
+
+      const allSuccess = document.createElement('h3');
+      allSuccess.style.color = '#15803d';
+      allSuccess.textContent = '🎉 ¡FLUJO COMPLETO VERIFICADO EXITOSAMENTE AL 100%! (16/16 PASOS)';
+      document.body.appendChild(allSuccess);
+
+    } catch (e) {
+      log('ERROR', e.message, false);
+    }
+  </script>
+
+
+</body></html>

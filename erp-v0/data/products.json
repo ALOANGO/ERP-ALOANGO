@@ -1,0 +1,20 @@
+[
+  { "sku": "TEC-001", "name": "Laptop Corporativa ThinkPro 15\" i7 16GB", "category": "Tecnología", "cost": 2400000, "price": 3450000, "minStock": 3, "stock": 12, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-002", "name": "Monitor LED 27\" IPS 4K Ultra Slim", "category": "Tecnología", "cost": 720000, "price": 1150000, "minStock": 5, "stock": 18, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-003", "name": "Teclado Mecánico Ergonómico Bluetooth", "category": "Tecnología", "cost": 130000, "price": 215000, "minStock": 8, "stock": 25, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-004", "name": "Mouse Óptico Inalámbrico Silencioso", "category": "Tecnología", "cost": 45000, "price": 85000, "minStock": 10, "stock": 40, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-005", "name": "Diadema con Cancelación Activa de Ruido", "category": "Tecnología", "cost": 180000, "price": 310000, "minStock": 5, "stock": 15, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-006", "name": "Disco Sólido Externo SSD 1TB USB-C", "category": "Tecnología", "cost": 260000, "price": 420000, "minStock": 6, "stock": 20, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-007", "name": "Impresora Multifuncional Tanque Continuo", "category": "Tecnología", "cost": 650000, "price": 980000, "minStock": 4, "stock": 8, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-008", "name": "Router WiFi 6 Mesh Doble Banda Gigabit", "category": "Tecnología", "cost": 210000, "price": 350000, "minStock": 4, "stock": 14, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-009", "name": "UPS Regulador de Voltaje 1200VA 8 Tomas", "category": "Tecnología", "cost": 320000, "price": 490000, "minStock": 5, "stock": 2, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "TEC-010", "name": "Cámara Web Full HD 1080p con Micrófono", "category": "Tecnología", "cost": 95000, "price": 175000, "minStock": 6, "stock": 1, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "OFI-001", "name": "Silla Ergonómica Ejecutiva Cabecero Ajustable", "category": "Oficina", "cost": 380000, "price": 620000, "minStock": 4, "stock": 10, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "OFI-002", "name": "Escritorio Eléctrico Ajustable Altura 140x70", "category": "Oficina", "cost": 890000, "price": 1450000, "minStock": 2, "stock": 5, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "OFI-003", "name": "Archivador Metálico 3 Gavetas con Llave", "category": "Oficina", "cost": 280000, "price": 450000, "minStock": 3, "stock": 7, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "OFI-004", "name": "Lámpara LED Escritorio con Cargador Inalámbrico", "category": "Oficina", "cost": 75000, "price": 135000, "minStock": 5, "stock": 22, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "OFI-005", "name": "Destructora de Papel Microcorte 12 Hojas", "category": "Oficina", "cost": 340000, "price": 540000, "minStock": 3, "stock": 2, "unit": "UND", "taxRate": 0.19 },
+  { "sku": "PAP-001", "name": "Caja Resma Papel Fotocopia Carta 75g (10 resmas)", "category": "Papelería", "cost": 145000, "price": 210000, "minStock": 8, "stock": 30, "unit": "CAJA", "taxRate": 0.19 },
+  { "sku": "ASE-001", "name": "Galón Detergente Desinfectante Multiusos Lavanda", "category": "Aseo", "cost": 22000, "price": 39000, "minStock": 12, "stock": 40, "unit": "GAL", "taxRate": 0.19 },
+  { "sku": "FER-001", "name": "Taladro Percutor Inalámbrico 20V con 2 Baterías", "category": "Ferretería", "cost": 310000, "price": 495000, "minStock": 3, "stock": 8, "unit": "UND", "taxRate": 0.19 }
+]

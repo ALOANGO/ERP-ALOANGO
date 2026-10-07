@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Ejecutivo — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link active">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- TOP NAVBAR -->
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn" aria-label="Abrir Menú">☰</button>
+          
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                id="global-search-input"
+                class="global-search-input"
+                placeholder="Buscar productos, clientes, ventas, compras..."
+                autocomplete="off"
+              />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn" title="Alertas del Sistema">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner" title="Ejecutar suite de pruebas">
+            🧪 Tests V0
+          </a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()" title="Reestablecer base de datos inicial">
+            🔄 Reiniciar Demo
+          </button>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Panel de Control Ejecutivo</h1>
+            <p>Resumen operativo en tiempo real: inventario, facturación, cuentas por cobrar y margen.</p>
+          </div>
+          <div class="page-actions">
+            <a href="ventas.html" class="btn btn-primary">➕ Nueva Venta</a>
+            <a href="compras.html" class="btn btn-secondary">🛒 Nueva Compra</a>
+          </div>
+        </div>
+
+        <!-- 4 KPI CARDS (Requirement 5) -->
+        <div class="kpi-grid">
+          <!-- KPI 1: Ventas de Hoy -->
+          <div class="kpi-card kpi-blue">
+            <div>
+              <div class="kpi-header">
+                <span class="kpi-title">Ventas de Hoy</span>
+                <div class="kpi-icon icon-blue">💰</div>
+              </div>
+              <div class="kpi-value" id="kpi-today-sales-val">$ 0</div>
+            </div>
+            <div class="kpi-subtext">
+              <span id="kpi-today-sales-count">0 ventas registradas</span>
+              <span id="kpi-today-sales-trend" class="trend-badge neutral">0% vs ayer</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: Cuentas por Cobrar -->
+          <div class="kpi-card kpi-amber">
+            <div>
+              <div class="kpi-header">
+                <span class="kpi-title">Cuentas por Cobrar</span>
+                <div class="kpi-icon icon-amber">⏳</div>
+              </div>
+              <div class="kpi-value" id="kpi-ar-total-val">$ 0</div>
+            </div>
+            <div class="kpi-subtext">
+              <span id="kpi-ar-overdue-val" style="color: var(--danger); font-weight: 600;">Vencida: $ 0</span>
+              <span id="kpi-ar-count-val">0 docs pendientes</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: Stock Crítico -->
+          <div class="kpi-card kpi-teal">
+            <div>
+              <div class="kpi-header">
+                <span class="kpi-title">Stock Crítico</span>
+                <div class="kpi-icon icon-teal">⚠️</div>
+              </div>
+              <div class="kpi-value" id="kpi-stock-crit-val">0 ítems</div>
+            </div>
+            <div class="kpi-subtext">
+              <span id="kpi-stock-crit-sub">0% del catálogo debajo del mínimo</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: Ganancia Estimada del Mes -->
+          <div class="kpi-card kpi-purple">
+            <div>
+              <div class="kpi-header">
+                <span class="kpi-title">Ganancia Est. del Mes</span>
+                <div class="kpi-icon icon-purple">📈</div>
+              </div>
+              <div class="kpi-value" id="kpi-profit-val">$ 0</div>
+            </div>
+            <div class="kpi-subtext">
+              <span id="kpi-profit-sub">Calculada con costo histórico de cada venta</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 CHARTS GRID (Requirement 6) -->
+        <div class="charts-grid">
+          <!-- Gráfico 1: Ventas últimos 7 días -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-title">Ventas Últimos 7 Días</div>
+                <div class="chart-subtitle">Facturación diaria consolidada</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-sales-7days"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico 2: Ventas por categoría -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-title">Distribución por Categoría</div>
+                <div class="chart-subtitle">Participación sobre ventas netas</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-categories-sales"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico 3: Margen por categoría -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-title">Margen & Utilidad por Categoría</div>
+                <div class="chart-subtitle">Comparativa ventas brutas vs margen</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-margin-category"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico 4: Estado de cartera -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-title">Estado Global de Cartera</div>
+                <div class="chart-subtitle">Corriente vs Vencida vs Pagada</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-cartera-status"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT SALES ACTIVITY -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Últimas Ventas Registradas</h3>
+            <a href="ventas.html" class="btn btn-secondary btn-sm">Ver Todas las Ventas →</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Documento</th>
+                  <th>Fecha</th>
+                  <th>Cliente</th>
+                  <th>Total Factura</th>
+                  <th>Saldo Pendiente</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="recent-sales-table-body">
+                <!-- Injected by dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

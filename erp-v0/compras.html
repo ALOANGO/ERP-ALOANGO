@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Órdenes de Compra y Abastecimiento — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link active" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn">☰</button>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="global-search-input" class="global-search-input" placeholder="Buscar productos, clientes, ventas..." />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner">🧪 Tests V0</a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()">🔄 Reiniciar Demo</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Órdenes de Compra y Recepción</h1>
+            <p id="purchases-count">Cargando órdenes de compra...</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" onclick="openNewPurchaseModal()">
+              ➕ Nueva Compra
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="toolbar-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="filter-group">
+            <label for="purchases-filter-search">Buscar Compra</label>
+            <input type="text" id="purchases-filter-search" class="form-control" placeholder="Buscar por COM-..., proveedor..." />
+          </div>
+          <div class="filter-group">
+            <label for="purchases-filter-status">Estado</label>
+            <select id="purchases-filter-status" class="form-select">
+              <option value="ALL">Todos los Estados</option>
+              <option value="BORRADOR">Borrador</option>
+              <option value="APROBADO">Aprobado</option>
+              <option value="PARCIALMENTE PAGADO">Parcialmente pagado</option>
+              <option value="PAGADO">Pagado</option>
+              <option value="FINALIZADO">Finalizado</option>
+              <option value="ANULADO">Anulado</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="purchases-filter-start">Fecha Desde</label>
+            <input type="date" id="purchases-filter-start" class="form-control" />
+          </div>
+          <div class="filter-group">
+            <label for="purchases-filter-end">Fecha Hasta</label>
+            <input type="date" id="purchases-filter-end" class="form-control" />
+          </div>
+        </div>
+
+        <!-- PURCHASES TABLE -->
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Documento</th>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Abonado</th>
+                <th>Saldo</th>
+                <th>Estado</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="purchases-table-body">
+              <!-- Loaded by purchases.js -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: NUEVA COMPRA -->
+  <div id="purchase-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-xl">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Orden de Compra</h3>
+        <button type="button" class="modal-close-btn" onclick="closePurchaseModal()">&times;</button>
+      </div>
+      <form id="purchase-form">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group" style="grid-column: span 2;">
+              <label for="purchase-supplier-id">Proveedor <span class="required">*</span></label>
+              <select id="purchase-supplier-id" class="form-select" required>
+                <!-- Loaded by purchases.js -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="purchase-date">Fecha de Orden <span class="required">*</span></label>
+              <input type="date" id="purchase-date" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="purchase-due-date">Fecha Vencimiento <span class="required">*</span></label>
+              <input type="date" id="purchase-due-date" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="purchase-warehouse">Bodega de Destino</label>
+              <select id="purchase-warehouse" class="form-select">
+                <option value="Bodega Principal">Bodega Principal</option>
+                <option value="Bodega Norte">Bodega Norte</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: span 3;">
+              <label for="purchase-notes">Notas / Referencia Cotización</label>
+              <input type="text" id="purchase-notes" class="form-control" placeholder="Factura de proveedor, guía de despacho..." />
+            </div>
+          </div>
+
+          <!-- Add Line Toolbar -->
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin: 1.25rem 0;">
+            <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.65rem;">
+              Agregar Productos a Comprar
+            </div>
+            <div style="display: grid; grid-template-columns: 3fr 1fr 1.5fr auto; gap: 0.75rem; align-items: flex-end;">
+              <div class="form-group">
+                <label for="purchase-line-product">Producto</label>
+                <select id="purchase-line-product" class="form-select">
+                  <!-- Loaded by purchases.js -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="purchase-line-quantity">Cantidad</label>
+                <input type="number" id="purchase-line-quantity" class="form-control" min="1" step="1" value="1" />
+              </div>
+              <div class="form-group">
+                <label for="purchase-line-cost">Costo Unitario de Compra ($)</label>
+                <input type="number" id="purchase-line-cost" class="form-control" min="0" step="1" />
+              </div>
+              <button type="button" id="btn-add-purchase-line" class="btn btn-primary" style="height: 38px;">
+                ➕ Agregar Ítem
+              </button>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th style="width: 80px;">Cant</th>
+                  <th>Costo Unit.</th>
+                  <th>IVA (19%)</th>
+                  <th>Total Línea</th>
+                  <th style="width: 60px; text-align: right;">Quitar</th>
+                </tr>
+              </thead>
+              <tbody id="purchase-items-table-body">
+                <!-- Lines injected by purchases.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Summary breakdown -->
+          <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+            <div class="totals-card">
+              <div class="totals-row">
+                <span>Subtotal:</span>
+                <strong id="purchase-summary-subtotal">$ 0</strong>
+              </div>
+              <div class="totals-row">
+                <span>IVA (19%):</span>
+                <strong id="purchase-summary-tax">$ 0</strong>
+              </div>
+              <div class="totals-row grand-total">
+                <span>Total Orden de Compra:</span>
+                <strong id="purchase-summary-total">$ 0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePurchaseModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Orden (Borrador)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/purchases.js"></script>
+</body>
+</html>

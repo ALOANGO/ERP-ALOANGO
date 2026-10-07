@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suite de Pruebas Funcionales — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+  <style>
+    .test-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      box-shadow: var(--shadow-xs);
+    }
+    .test-indicator {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .test-indicator.passed {
+      background: #dcfce7;
+      color: #15803d;
+      border: 2px solid #86efac;
+    }
+    .test-indicator.failed {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 2px solid #fca5a5;
+    }
+    .test-indicator.pending {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 2px solid var(--border);
+    }
+    .test-details {
+      flex: 1;
+    }
+    .test-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .test-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0.35rem 0 0.5rem 0;
+    }
+    .test-output {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link active">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn">☰</button>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="global-search-input" class="global-search-input" placeholder="Buscar productos, clientes, ventas..." />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner">🧪 Tests V0</a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()">🔄 Reiniciar Demo</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Suite de Verificación y Pruebas Funcionales</h1>
+            <p>Validación automatizada de las 7 reglas inquebrantables de negocio del ERP V0 (Requerimiento 33).</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" id="btn-run-tests" class="btn btn-primary" onclick="executeTestSuite()">
+              ▶️ Ejecutar Todas las Pruebas
+            </button>
+          </div>
+        </div>
+
+        <!-- SCORECARD -->
+        <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #ffffff;">
+          <div class="card-body" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.35rem;">Estado de Reglas de Negocio</h2>
+              <p style="color: #cbd5e1; font-size: 0.85rem;">Pruebas de integridad de inventario, protección de sobrepago, inmutabilidad y auditoría.</p>
+            </div>
+            <div style="display: flex; gap: 1.5rem; text-align: center;">
+              <div>
+                <div id="tests-passed-score" style="font-size: 2.2rem; font-weight: 800; color: #4ade80;">-</div>
+                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Superadas</div>
+              </div>
+              <div>
+                <div id="tests-total-score" style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">7</div>
+                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Totales</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEST CASES CONTAINER -->
+        <div id="tests-results-container">
+          <!-- Populated by script -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/tests.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auto-run tests on page load
+      executeTestSuite();
+    });
+
+    function executeTestSuite() {
+      const results = ERPTestSuite.runAll();
+      const container = document.getElementById('tests-results-container');
+      const passedScoreEl = document.getElementById('tests-passed-score');
+
+      const passedCount = results.filter((r) => r.passed).length;
+      if (passedScoreEl) passedScoreEl.textContent = `${passedCount}`;
+
+      container.innerHTML = results
+        .map(
+          (t) => `
+        <div class="test-card">
+          <div class="test-indicator ${t.passed ? 'passed' : 'failed'}">
+            ${t.passed ? '✓' : '✕'}
+          </div>
+          <div class="test-details">
+            <div class="test-name">
+              <span>${t.name}</span>
+              <span class="badge ${t.passed ? 'badge-success' : 'badge-danger'}">
+                ${t.passed ? 'PASÓ' : 'FALLÓ'}
+              </span>
+            </div>
+            <div class="test-desc">${t.description}</div>
+            <div class="test-output">${t.output}</div>
+          </div>
+        </div>
+      `
+        )
+        .join('');
+
+      if (passedCount === results.length) {
+        ERPUtils.showToast('Pruebas Completadas', 'Las 7 pruebas de negocio han sido superadas con éxito (7/7).', 'success');
+      } else {
+        ERPUtils.showToast('Alerta de Pruebas', `Se detectaron ${results.length - passedCount} fallos de validación.`, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

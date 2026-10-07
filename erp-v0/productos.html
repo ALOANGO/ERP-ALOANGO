@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de Productos — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link active" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn">☰</button>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="global-search-input" class="global-search-input" placeholder="Buscar productos, clientes, ventas..." />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner">🧪 Tests V0</a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()">🔄 Reiniciar Demo</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Catálogo de Productos</h1>
+            <p id="products-count">Cargando catálogo...</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" onclick="openNewProductModal()">
+              ➕ Nuevo Producto
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTERS TOOLBAR -->
+        <div class="toolbar-grid">
+          <div class="filter-group">
+            <label for="filter-search">Buscar Producto</label>
+            <input type="text" id="filter-search" class="form-control" placeholder="Buscar por SKU, nombre, código..." />
+          </div>
+          <div class="filter-group">
+            <label for="filter-category">Categoría</label>
+            <select id="filter-category" class="form-select">
+              <option value="ALL">Todas las Categorías</option>
+              <option value="Tecnología">Tecnología</option>
+              <option value="Oficina">Oficina</option>
+              <option value="Papelería">Papelería</option>
+              <option value="Aseo">Aseo</option>
+              <option value="Ferretería">Ferretería</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-status">Estado de Producto / Stock</label>
+            <select id="filter-status" class="form-select">
+              <option value="ALL">Todos los Estados</option>
+              <option value="ACTIVO">Activo</option>
+              <option value="INACTIVO">Inactivo</option>
+              <option value="STOCK_CRITICO">⚠️ Stock Crítico</option>
+              <option value="SIN_STOCK">❌ Sin Stock</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PRODUCTS TABLE -->
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Img</th>
+                <th class="sortable" data-sort="sku">SKU ↕</th>
+                <th>Cód. Barras</th>
+                <th class="sortable" data-sort="name">Producto ↕</th>
+                <th class="sortable" data-sort="category">Categoría ↕</th>
+                <th class="sortable" data-sort="cost">Costo ↕</th>
+                <th class="sortable" data-sort="price">Precio Venta ↕</th>
+                <th class="sortable" data-sort="stock">Stock ↕</th>
+                <th>Mín</th>
+                <th>Estado</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body">
+              <!-- Loaded by products.js -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT PRODUCT -->
+  <div id="product-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <h3 id="product-modal-title" class="modal-title">Nuevo Producto</h3>
+        <button type="button" class="modal-close-btn" onclick="closeProductModal()">&times;</button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="prod-id" />
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-sku">SKU <span class="required">*</span></label>
+              <input type="text" id="prod-sku" class="form-control" placeholder="Ej: TEC-015" required />
+              <small class="form-help">Código único de inventario. No se permite duplicar.</small>
+            </div>
+            <div class="form-group">
+              <label for="prod-barcode">Código de Barras</label>
+              <input type="text" id="prod-barcode" class="form-control" placeholder="770123456789" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="prod-name">Nombre del Producto <span class="required">*</span></label>
+            <input type="text" id="prod-name" class="form-control" placeholder="Descripción comercial del ítem" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-category">Categoría <span class="required">*</span></label>
+              <select id="prod-category" class="form-select" required>
+                <option value="Tecnología">Tecnología</option>
+                <option value="Oficina">Oficina</option>
+                <option value="Papelería">Papelería</option>
+                <option value="Aseo">Aseo</option>
+                <option value="Ferretería">Ferretería</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-unit">Unidad de Medida</label>
+              <input type="text" id="prod-unit" class="form-control" value="UND" placeholder="UND, CAJA, GAL..." />
+            </div>
+            <div class="form-group">
+              <label for="prod-status">Estado</label>
+              <select id="prod-status" class="form-select">
+                <option value="ACTIVO">Activo</option>
+                <option value="INACTIVO">Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-cost">Costo de Compra ($) <span class="required">*</span></label>
+              <input type="number" id="prod-cost" class="form-control" min="0" step="1" required />
+            </div>
+            <div class="form-group">
+              <label for="prod-price">Precio de Venta ($) <span class="required">*</span></label>
+              <input type="number" id="prod-price" class="form-control" min="0" step="1" required />
+            </div>
+            <div class="form-group">
+              <label for="prod-min-stock">Stock Mínimo <span class="required">*</span></label>
+              <input type="number" id="prod-min-stock" class="form-control" min="0" step="1" required value="5" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-tax">Impuesto (IVA)</label>
+              <select id="prod-tax" class="form-select">
+                <option value="0.19">IVA General (19%)</option>
+                <option value="0.05">IVA Reducido (5%)</option>
+                <option value="0">Exento (0%)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-image">URL de Imagen</label>
+              <input type="url" id="prod-image" class="form-control" placeholder="https://picsum.photos/seed/..." />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-description">Descripción Detallada / Ficha Técnica</label>
+            <textarea id="prod-description" class="form-control" rows="2" placeholder="Especificaciones adicionales..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

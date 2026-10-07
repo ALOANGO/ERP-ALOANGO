@@ -1,0 +1,14 @@
+[
+  {
+    "docNumber": "COM-00001",
+    "supplierName": "Mayorista de Tecnología Global SA",
+    "total": 12000000,
+    "status": "PAGADO"
+  },
+  {
+    "docNumber": "COM-00002",
+    "supplierName": "Industrias de Papel y Celulosa Nacional",
+    "total": 3500000,
+    "status": "APROBADO"
+  }
+]

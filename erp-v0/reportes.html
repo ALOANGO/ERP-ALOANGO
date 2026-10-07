@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analítica y Reportes Gerenciales — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/print.css" />
+  <style>
+    .report-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .report-tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .report-tab-btn:hover {
+      color: var(--text-main);
+    }
+    .report-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">E</div>
+          <div class="brand-text">
+            <span class="brand-title">ERP EMPRESARIAL</span>
+            <span class="brand-subtitle">COMERCIAL V0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Catálogo & Almacén</div>
+        <a href="productos.html" class="nav-link" data-permission="productos">
+          <span>🏷️</span>
+          <span>Productos</span>
+        </a>
+        <a href="terceros.html" class="nav-link" data-permission="clientes">
+          <span>👥</span>
+          <span>Terceros (Partners)</span>
+        </a>
+        <a href="inventario.html" class="nav-link" data-permission="inventario">
+          <span>📦</span>
+          <span>Inventario</span>
+        </a>
+        <a href="kardex.html" class="nav-link" data-permission="kardex">
+          <span>📜</span>
+          <span>Kárdex</span>
+        </a>
+
+        <div class="nav-section-title">Operaciones</div>
+        <a href="ventas.html" class="nav-link" data-permission="ventas">
+          <span>💼</span>
+          <span>Ventas</span>
+        </a>
+        <a href="compras.html" class="nav-link" data-permission="compras">
+          <span>🛒</span>
+          <span>Compras</span>
+        </a>
+        <a href="cartera.html" class="nav-link" data-permission="cartera">
+          <span>💳</span>
+          <span>Cartera (Cobros / Pagos)</span>
+        </a>
+
+        <div class="nav-section-title">Gerencia & Control</div>
+        <a href="reportes.html" class="nav-link active" data-permission="reportes">
+          <span>📈</span>
+          <span>Reportes & Flujo</span>
+        </a>
+        <a href="auditoria.html" class="nav-link">
+          <span>🔍</span>
+          <span>Auditoría</span>
+        </a>
+        <a href="pruebas.html" class="nav-link">
+          <span>🧪</span>
+          <span>Pruebas Funcionales</span>
+          <span class="nav-badge">7/7</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador</span>
+            <span class="user-role-tag">admin</span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" title="Cerrar sesión">🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="nav-left">
+          <button type="button" class="sidebar-toggle-btn">☰</button>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="global-search-input" class="global-search-input" placeholder="Buscar productos, clientes, ventas..." />
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button type="button" id="btn-system-notifications" class="topbar-badge-btn">
+            🔔 Alertas
+            <span id="notif-badge-count" class="badge badge-warning" style="display: none; padding: 0.1rem 0.4rem; font-size: 0.7rem;">0</span>
+          </button>
+          <a href="pruebas.html" class="topbar-badge-btn btn-test-runner">🧪 Tests V0</a>
+          <button type="button" class="topbar-badge-btn" onclick="resetSystemData()">🔄 Reiniciar Demo</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Reportes y Analítica Financiera</h1>
+            <p>Métricas integradas de ventas, valuación de inventario, cartera por vencer y flujo de caja neto.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir Informe</button>
+          </div>
+        </div>
+
+        <!-- REPORT TABS -->
+        <div class="report-tabs">
+          <button type="button" class="report-tab-btn active" data-target="sec-report-sales">
+            📊 Reporte de Ventas
+          </button>
+          <button type="button" class="report-tab-btn" data-target="sec-report-inventory">
+            📦 Inventario & Stock
+          </button>
+          <button type="button" class="report-tab-btn" data-target="sec-report-cartera">
+            💳 Cartera & Envejecimiento
+          </button>
+          <button type="button" class="report-tab-btn" data-target="sec-report-cashflow">
+            💵 Flujo de Caja
+          </button>
+        </div>
+
+        <!-- 1. SALES REPORT -->
+        <div id="sec-report-sales" class="report-section">
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-header"><span class="kpi-title">Ventas Netas Totales</span><div class="kpi-icon icon-blue">💰</div></div>
+              <div class="kpi-value" id="rep-sales-total">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-amber">
+              <div class="kpi-header"><span class="kpi-title">Costo de Ventas Histórico</span><div class="kpi-icon icon-amber">📉</div></div>
+              <div class="kpi-value" id="rep-sales-cost">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-teal">
+              <div class="kpi-header"><span class="kpi-title">Margen Bruto Total</span><div class="kpi-icon icon-teal">💎</div></div>
+              <div class="kpi-value" id="rep-sales-profit">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-purple">
+              <div class="kpi-header"><span class="kpi-title">% Rentabilidad Bruta</span><div class="kpi-icon icon-purple">📈</div></div>
+              <div class="kpi-value" id="rep-sales-margin-pct">0%</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+            <!-- Top Products -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Top 10 Productos Más Vendidos</h3>
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th style="text-align: center;">Uds</th>
+                      <th>Facturado</th>
+                      <th>Costo</th>
+                      <th>Margen</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-sales-by-product-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Top Clients -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Top Clientes Principales</h3>
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th style="text-align: right;">Total Comprado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-sales-by-client-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. INVENTORY REPORT -->
+        <div id="sec-report-inventory" class="report-section" style="display: none;">
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-teal">
+              <div class="kpi-header"><span class="kpi-title">Valorización de Activos</span><div class="kpi-icon icon-teal">💎</div></div>
+              <div class="kpi-value" id="rep-inv-total-val">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-header"><span class="kpi-title">Existencias Totales</span><div class="kpi-icon icon-blue">📦</div></div>
+              <div class="kpi-value" id="rep-inv-total-units">0 uds</div>
+            </div>
+            <div class="kpi-card kpi-amber">
+              <div class="kpi-header"><span class="kpi-title">Productos Críticos / Sin Stock</span><div class="kpi-icon icon-amber">⚠️</div></div>
+              <div class="kpi-value" id="rep-inv-critical-count">0</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-header">
+              <h3 class="card-title">Productos con Alerta de Reposición (Stock Crítico)</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Stock Actual</th>
+                    <th>Stock Mínimo</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="rep-inv-critical-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. CARTERA REPORT -->
+        <div id="sec-report-cartera" class="report-section" style="display: none;">
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-header"><span class="kpi-title">Total Cuentas por Cobrar</span><div class="kpi-icon icon-blue">📥</div></div>
+              <div class="kpi-value" id="rep-cartera-ar-total">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-amber">
+              <div class="kpi-header"><span class="kpi-title">Cartera Vencida (Clientes)</span><div class="kpi-icon icon-amber">🚨</div></div>
+              <div class="kpi-value" id="rep-cartera-ar-overdue" style="color: var(--danger);">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-purple">
+              <div class="kpi-header"><span class="kpi-title">Cuentas por Pagar (Proveedores)</span><div class="kpi-icon icon-purple">📤</div></div>
+              <div class="kpi-value" id="rep-cartera-ap-total">$ 0</div>
+            </div>
+            <div class="kpi-card kpi-teal">
+              <div class="kpi-header"><span class="kpi-title">Deuda Vencida (Proveedores)</span><div class="kpi-icon icon-teal">⏰</div></div>
+              <div class="kpi-value" id="rep-cartera-ap-overdue" style="color: var(--danger);">$ 0</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-header">
+              <h3 class="card-title">Distribución de Saldos Pendientes por Cliente</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Saldo por Cobrar</th>
+                  </tr>
+                </thead>
+                <tbody id="rep-cartera-client-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. CASH FLOW (Requirement 22) -->
+        <div id="sec-report-cashflow" class="report-section" style="display: none;">
+          <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="kpi-card kpi-teal">
+              <div class="kpi-header"><span class="kpi-title">Total Ingresos Recaudados (+)</span><div class="kpi-icon icon-teal">📥</div></div>
+              <div class="kpi-value" id="rep-cash-inflows" style="color: var(--success);">$ 0</div>
+              <div class="kpi-subtext">Pagos recibidos de clientes</div>
+            </div>
+            <div class="kpi-card kpi-amber">
+              <div class="kpi-header"><span class="kpi-title">Total Egresos Desembolsados (-)</span><div class="kpi-icon icon-amber">📤</div></div>
+              <div class="kpi-value" id="rep-cash-outflows" style="color: var(--danger);">$ 0</div>
+              <div class="kpi-subtext">Pagos realizados a proveedores</div>
+            </div>
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-header"><span class="kpi-title">Flujo Neto de Caja</span><div class="kpi-icon icon-blue">⚖️</div></div>
+              <div class="kpi-value" id="rep-cash-net">$ 0</div>
+              <div class="kpi-subtext">Flujo Neto = Ingresos - Egresos</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-header">
+              <h3 class="card-title">Registro Cronológico de Movimientos de Caja</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Fecha & Hora</th>
+                    <th>N° Recibo</th>
+                    <th>Concepto</th>
+                    <th>Documento / Tercero</th>
+                    <th>Medio</th>
+                    <th>Monto Flujo</th>
+                  </tr>
+                </thead>
+                <tbody id="rep-cashflow-table-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/audit.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/reports.js"></script>
+</body>
+</html>

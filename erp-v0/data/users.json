@@ -1,0 +1,38 @@
+[
+  {
+    "id": "usr-admin-1",
+    "name": "Carlos Mendoza",
+    "email": "admin@erp.com",
+    "password": "password",
+    "role": "admin",
+    "roleName": "Administrador General",
+    "permissions": ["*"]
+  },
+  {
+    "id": "usr-almacen-1",
+    "name": "Mario Beltrán",
+    "email": "almacen@erp.com",
+    "password": "password",
+    "role": "almacen",
+    "roleName": "Jefe de Almacén",
+    "permissions": ["productos", "inventario", "kardex", "compras"]
+  },
+  {
+    "id": "usr-vendedor-1",
+    "name": "Laura Gómez",
+    "email": "vendedor@erp.com",
+    "password": "password",
+    "role": "vendedor",
+    "roleName": "Ejecutivo de Ventas",
+    "permissions": ["clientes", "ventas", "inventario_read"]
+  },
+  {
+    "id": "usr-contador-1",
+    "name": "Felipe Duarte",
+    "email": "contador@erp.com",
+    "password": "password",
+    "role": "contador",
+    "roleName": "Contador General",
+    "permissions": ["compras", "ventas", "cartera", "reportes", "dashboard"]
+  }
+]

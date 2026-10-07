@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso al Sistema — ERP Empresarial V0</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <style>
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 20%, #1e293b, #0f172a);
+      padding: 1.5rem;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-xl);
+    }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .login-demo-presets {
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed var(--border);
+    }
+    .demo-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .btn-demo-role {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.6rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .btn-demo-role:hover {
+      background: var(--primary-light);
+      border-color: var(--border-focus);
+      color: var(--primary);
+    }
+    .btn-demo-role small {
+      display: block;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 0.68rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="brand-icon">E</div>
+        <div class="brand-text">
+          <span class="brand-title" style="color: var(--primary); font-size: 1.25rem;">ERP EMPRESARIAL</span>
+          <span class="brand-subtitle" style="color: var(--text-muted);">SISTEMA DE GESTIÓN V0</span>
+        </div>
+      </div>
+
+      <h2 style="font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 0.35rem;">Iniciar Sesión</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Ingrese con sus credenciales de usuario o elija un perfil demo
+      </p>
+
+      <form id="login-form">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="login-email">Correo Electrónico <span class="required">*</span></label>
+          <input type="email" id="login-email" class="form-control" placeholder="admin@erp.com" required value="admin@erp.com" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="login-password">Contraseña <span class="required">*</span></label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="password" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.7rem; font-size: 0.95rem;">
+          Entrar al Sistema
+        </button>
+      </form>
+
+      <div class="login-demo-presets">
+        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; text-align: center;">
+          ⚡ Acceso Rápido Demo (1 Clic)
+        </div>
+        <div class="demo-btn-grid">
+          <button type="button" class="btn-demo-role" onclick="quickLogin('admin@erp.com', 'password')">
+            👑 Admin
+            <small>Acceso Total</small>
+          </button>
+          <button type="button" class="btn-demo-role" onclick="quickLogin('almacen@erp.com', 'password')">
+            📦 Almacén
+            <small>Inventario, Compras</small>
+          </button>
+          <button type="button" class="btn-demo-role" onclick="quickLogin('vendedor@erp.com', 'password')">
+            💼 Vendedor
+            <small>Ventas, Clientes</small>
+          </button>
+          <button type="button" class="btn-demo-role" onclick="quickLogin('contador@erp.com', 'password')">
+            📊 Contador
+            <small>Cartera, Reportes</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/seed.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize seed on login page too
+      if (typeof SeedService !== 'undefined') {
+        SeedService.initSeed(false);
+      }
+
+      const form = document.getElementById('login-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-password').value;
+        try {
+          AuthService.login(email, pass);
+          ERPUtils.showToast('Bienvenido', 'Autenticación exitosa', 'success');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 400);
+        } catch (err) {
+          ERPUtils.showToast('Acceso Denegado', err.message, 'danger');
+        }
+      });
+    });
+
+    function quickLogin(email, password) {
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = password;
+      try {
+        AuthService.login(email, password);
+        window.location.href = 'index.html';
+      } catch (err) {
+        ERPUtils.showToast('Error', err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

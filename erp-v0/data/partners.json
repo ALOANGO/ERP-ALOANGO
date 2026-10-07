@@ -1,0 +1,7 @@
+[
+  { "type": "CLIENTE", "docType": "NIT", "docNumber": "900.123.456-1", "legalName": "Distribuciones Andina SAS", "city": "Bogotá" },
+  { "type": "CLIENTE", "docType": "NIT", "docNumber": "900.234.567-2", "legalName": "Soluciones Tecnológicas del Caribe SA", "city": "Barranquilla" },
+  { "type": "PROVEEDOR", "docType": "NIT", "docNumber": "800.111.222-1", "legalName": "Mayorista de Tecnología Global SA", "city": "Funza" },
+  { "type": "PROVEEDOR", "docType": "NIT", "docNumber": "800.222.333-2", "legalName": "Industrias de Papel y Celulosa Nacional", "city": "Palmira" },
+  { "type": "AMBOS", "docType": "NIT", "docNumber": "900.999.111-1", "legalName": "Soluciones Gráficas e Impresos Siglo SAS", "city": "Bogotá" }
+]

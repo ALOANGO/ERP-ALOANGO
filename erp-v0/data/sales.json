@@ -1,0 +1,14 @@
+[
+  {
+    "docNumber": "VEN-00001",
+    "customerName": "Distribuciones Andina SAS",
+    "total": 3450000,
+    "status": "PAGADO"
+  },
+  {
+    "docNumber": "VEN-00002",
+    "customerName": "Soluciones Tecnológicas del Caribe SA",
+    "total": 1150000,
+    "status": "PARCIALMENTE PAGADO"
+  }
+]
